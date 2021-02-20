@@ -1,0 +1,2 @@
+0:horrible,worst,bad
+1:terrific,amazing,awesome
