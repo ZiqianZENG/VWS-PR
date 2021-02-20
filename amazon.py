@@ -29,8 +29,8 @@ flags.DEFINE_float("learning_rate", 1, "learning rate for adadelta")
 flags.DEFINE_float("lr_decay", 0.95, "learning rate decay")
 flags.DEFINE_float("l2_reg", 0.0001, "l2 reg for a document classifier")
 
-flags.DEFINE_float("alpha", 0.1, "")
-flags.DEFINE_float("beta", 0.3, "")
+flags.DEFINE_float("alpha", 0.1, "coefficient of H(q(c|x))")
+flags.DEFINE_float("beta", 0.3, "coefficient of regularization")
 flags.DEFINE_float("gamma_positive", 0.7, "gamma_1")
 flags.DEFINE_float("gamma_negative", -0.1, "gamma_2")
 
