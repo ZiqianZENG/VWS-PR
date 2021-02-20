@@ -10,5 +10,16 @@
 
 ```bash
 python yelp.py
+python imdb.py
+python amazon.py
 ```
+
+* If you want to run VWS
+```bash
+python yelp.py --beta 0.0
+python imdb.py --beta 0.0
+python amazon.py --beta 0.0
+```
+
+
 
