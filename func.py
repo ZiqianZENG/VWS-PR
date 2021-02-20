@@ -133,10 +133,8 @@ def get_regularizer_score_pairwise(config, probs, senti_emb, negation):
 
     """
     r_p_distance = get_distance(config, probs)  
-    if config.cos_sim == 'mean': 
-        similarity, mask, b_x_b_mean, b_x_b_min, b_x_b_max = get_cos_mean_similarity(config, senti_emb, negation)
-    elif config.cos_sim == 'min_max':
-        similarity, mask, b_x_b_mean, b_x_b_min, b_x_b_max = get_cos_min_max_similarity(config, senti_emb, negation)
+    
+    similarity, mask, b_x_b_mean, b_x_b_min, b_x_b_max = get_cos_min_max_similarity(config, senti_emb, negation)
     
     pair_cnt = tf.reduce_sum(mask)
 

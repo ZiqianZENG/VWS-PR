@@ -20,15 +20,15 @@ flags.DEFINE_string("op_emb", "op_emb", "path to opinion word embedding")
 flags.DEFINE_string("word_emb", "ret_emb", "path to word embedding")
 
 
-flags.DEFINE_integer("max_len", 256, "maximum length")
-flags.DEFINE_integer("num_filters", 100, "maximum length")
-flags.DEFINE_boolean("emb_trainable", False, "word embeddings trainable")
+flags.DEFINE_integer("max_len", 256, "maximum length in CNN")
+flags.DEFINE_integer("num_filters", 100, "number of filters in CNN")
+flags.DEFINE_boolean("emb_trainable", False, "whether word embeddings trainable")
 
 flags.DEFINE_integer("batch_size",64, "mini-batch size")
 flags.DEFINE_float("keep_prob", 0.7, "dropout rate")
 flags.DEFINE_float("learning_rate", 1, "learning rate for adadelta")
 flags.DEFINE_float("lr_decay", 0.95, "learning rate decay")
-flags.DEFINE_float("l2_reg", 0.00001, "l2 reg for encoder")
+flags.DEFINE_float("l2_reg", 0.00001, "l2 reg for a document classifier")
 
 flags.DEFINE_float("alpha", 0.1, "")
 flags.DEFINE_float("beta", 0.3, "")
@@ -42,13 +42,13 @@ flags.DEFINE_integer("num_batches", 200, "number of batches in when evaluating t
 flags.DEFINE_string("distance", "euclidean", "distance metric")
 flags.DEFINE_string("cos_sim", "min_max", "cosine similairty")
 
-flags.DEFINE_integer("emb_dim", 100, "dimension of embedding matrix")
+flags.DEFINE_integer("emb_dim", 100, "dimension of word embedding")
 
 flags.DEFINE_integer("eval_period", 100, "evaluate on dev every period")
 
-flags.DEFINE_integer("score_scale", 2, "score scale")
-flags.DEFINE_integer("num_senti", 5, "number of sentiment word in sampling")
-flags.DEFINE_integer("num_neg", 50, "number of sentiment word in sampling")
+flags.DEFINE_integer("score_scale", 2, "num of classes")
+flags.DEFINE_integer("num_senti", 5, "number of opinion word in sampling")
+flags.DEFINE_integer("num_neg", 50, "number of negative opinion word in sampling")
 flags.DEFINE_integer("min_count", 1, "min count in batches creation")
 flags.DEFINE_boolean("unsupervised", True, "whether to use unsupervised method")
 
