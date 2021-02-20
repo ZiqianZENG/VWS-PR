@@ -31,8 +31,8 @@ flags.DEFINE_float("l2_reg", 0.0001, "l2 reg for encoder")
 
 flags.DEFINE_float("alpha", 0.1, "")
 flags.DEFINE_float("beta", 0.3, "")
-flags.DEFINE_float("gamma_positive", 0.7, "")
-flags.DEFINE_float("gamma_negative", -0.1, "")
+flags.DEFINE_float("gamma_positive", 0.7, "gamma_1")
+flags.DEFINE_float("gamma_negative", -0.1, "gamma_2")
 
 flags.DEFINE_integer("num_epochs", 5, "maximum number of epochs")
 flags.DEFINE_integer("num_batches", 200, "number of batches in when evaluating training set not necessary to evaluate all")

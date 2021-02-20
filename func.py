@@ -66,33 +66,6 @@ def block_wise_operator(mat,a,b):
     return mat
 
 
-def get_cos_mean_similarity(config, senti_emb, negation):
-    negation_ = tf.tile(tf.expand_dims(negation, axis=2),[1, 1, tf.shape(senti_emb)[-1]])
-    senti_emb = senti_emb*negation_
-
-    senti_emb = tf.reshape(senti_emb, [-1, tf.shape(senti_emb)[-1]])
-    senti_emb = tf.nn.l2_normalize(senti_emb, axis=1)
-    bn_x_bn_cos_sim = tf.matmul(senti_emb, tf.transpose(senti_emb, [1, 0]), name='enlarge_cos_similarity')
-
-    bn_x_bn_cos_sim = block_wise_operator(bn_x_bn_cos_sim,config.batch_size,config.num_senti)
-    
-    b_x_b_mean = tf.reduce_mean(bn_x_bn_cos_sim,axis=[2,3])
-
-    b_x_b_max = tf.reduce_max(bn_x_bn_cos_sim,axis=[2,3])
-
-    b_x_b_min = tf.reduce_min(bn_x_bn_cos_sim,axis=[2,3])
-
-    mask_positive = tf.cast(tf.math.greater(b_x_b_mean, config.gamma_positive),dtype=tf.float32)
-    mask_negative = tf.cast(tf.math.less(b_x_b_mean, config.gamma_negative),dtype=tf.float32)
-    
-    mask_positive = tf.matrix_set_diag(mask_positive, tf.zeros((tf.shape(mask_positive)[0],), dtype=tf.float32))
-    mask_negative = tf.matrix_set_diag(mask_negative, tf.zeros((tf.shape(mask_negative)[0],), dtype=tf.float32))
-    
-    similarity = b_x_b_mean*mask_positive - (0.5 - b_x_b_mean)*mask_negative
-    
-    return similarity, mask_positive + mask_negative, b_x_b_mean, b_x_b_min, b_x_b_max
-
-
 def get_cos_min_max_similarity(config, senti_emb, negation):
     negation_ = tf.tile(tf.expand_dims(negation, axis=2),[1, 1, tf.shape(senti_emb)[-1]])
     senti_emb = senti_emb*negation_
