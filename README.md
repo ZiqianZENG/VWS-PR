@@ -5,6 +5,7 @@
   * Python3
   * tensorflow-gpu>=1.14.0 
   * tqdm
+  * sklearn
 
 ## Usage
 * VWS-PR
