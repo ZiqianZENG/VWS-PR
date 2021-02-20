@@ -13,13 +13,11 @@ flags.DEFINE_string("test", "train", "path to test data")
 flags.DEFINE_string("save_dir", "saved_model/imdb", "path to data dir")
 flags.DEFINE_string("data_dir", "data/imdb", "path to data dir")
 
-flags.DEFINE_string("para_log_dir", "log", "directory for saving log")
-flags.DEFINE_string("log_file", "imdb_hyper_params.txt", "directory for saving log")
-# flags.DEFINE_string("pred_file", "pred_file_run1.txt", "directory for saving log")
+flags.DEFINE_string("para_log_dir", "log", "directory for log file")
+flags.DEFINE_string("log_file", "imdb_hyper_params.txt", "log file name")
 
-flags.DEFINE_string("asp_emb", "op_emb", "path to pre-trained aspect embedding")
-flags.DEFINE_string("word_emb", "ret_emb", "path to pre-trained aspect embedding")
-flags.DEFINE_string("keywords", "keywords.txt", "path to pre-trained aspect embedding")
+flags.DEFINE_string("op_emb", "op_emb", "path to opinion word embedding")
+flags.DEFINE_string("word_emb", "ret_emb", "path to word embedding")
 
 flags.DEFINE_integer("max_len", 256, "maximum length")
 flags.DEFINE_integer("num_filters", 100, "maximum length")
@@ -32,29 +30,19 @@ flags.DEFINE_float("lr_decay", 0.95, "learning rate decay")
 flags.DEFINE_float("l2_reg", 0.0001, "l2 reg for encoder")
 
 flags.DEFINE_float("alpha", 0.1, "")
-flags.DEFINE_float("beta", 0.1, "")
-flags.DEFINE_float("gamma_positive", 0.8, "")
+flags.DEFINE_float("beta", 0.6, "")
+flags.DEFINE_float("gamma_positive", 0.7, "")
 flags.DEFINE_float("gamma_negative", -0.1, "")
-flags.DEFINE_float("gamma_vote", 0.0, "")
-
-flags.DEFINE_string("reg_type", "pairwise", "regularization type")
 
 flags.DEFINE_integer("num_epochs", 5, "maximum number of epochs")
 flags.DEFINE_integer("num_batches", 200, "number of batches in when evaluating training set not necessary to evaluate all")
-
-flags.DEFINE_integer("top_k", 50, "")
-flags.DEFINE_integer("neg_select_rank", 200, "")
 
 flags.DEFINE_string("distance", "euclidean", "distance metric")
 flags.DEFINE_string("cos_sim", "min_max", "cosine similairty")
 
 flags.DEFINE_integer("emb_dim", 100, "dimension of embedding matrix")
-# flags.DEFINE_integer("hidden", 100, "dimension of embedding matrix")
 
-flags.DEFINE_integer("record_period", 10, "record loss every period")
 flags.DEFINE_integer("eval_period", 100, "evaluate on dev every period")
-
-flags.DEFINE_boolean("softmax", False, "use only cannot link")
 
 flags.DEFINE_integer("score_scale", 2, "score scale")
 flags.DEFINE_integer("num_senti", 5, "number of sentiment word in sampling")
@@ -67,18 +55,13 @@ flags.DEFINE_integer("cache_size", 500, "size of dataset buffer")
 
 
 flags.DEFINE_boolean("verbose", True, "print details or not")
-flags.DEFINE_boolean("detail", False, "print details or not")
-
-# flags.DEFINE_boolean("binary", False, "binary bow")
-# flags.DEFINE_integer("min_df", 2, "minimum frequency to keep when generate bow")
 
 
 def main(_):
     config = flags.FLAGS
     print('alpha {:.2f} beta {:.2f} gamma_positive {:.2f} gamma_negative {:.2f}'.format(config.alpha, config.beta, config.gamma_positive, config.gamma_negative))
     print('dataset {}'.format(config.data_dir))
-    print('regularization type {}'.format(config.reg_type))
-    print('unsupervised {} softmax {} cosine_similarity {}'.format(config.unsupervised, config.softmax, config.cos_sim))
+    print('unsupervised {} cosine_similarity {}'.format(config.unsupervised, config.cos_sim))
     print('num_filters {} max_len {} emb_dim {} emb_trainable {}'.format(config.num_filters, config.max_len, config.emb_dim, config.emb_trainable))
     print('score_scale {} num_senti {} num_neg {}'.format(config.score_scale, config.num_senti, config.num_neg))
     print('num_epochs {}'.format(config.num_epochs))
