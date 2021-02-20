@@ -7,14 +7,14 @@
   * tqdm
 
 ## Usage
-
+* VWS-PR
 ```bash
 python yelp.py
 python imdb.py
 python amazon.py
 ```
 
-* If you want to run VWS
+* VWS
 ```bash
 python yelp.py --beta 0.0
 python imdb.py --beta 0.0
