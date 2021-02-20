@@ -10,28 +10,29 @@ from evaluator import Evaluator
 import numpy as np
 
 def train(config):
-    asp_word2idx, asp_emb = load_embedding(config, os.path.join(config.data_dir,config.asp_emb),True)
+    op_word2idx, op_emb = load_embedding(config, os.path.join(config.data_dir,config.op_emb),True)
     word2idx, word_emb = load_embedding(config, os.path.join(config.data_dir,config.word_emb))
 
-    asp_idx2word = { asp_word2idx[word]:word for word in asp_word2idx }
-    asp_idx2word[0] = 'NULL'
-    print("Building Batches") #16434
-    need_to_generate_neg_senti = config.unsupervised and True
+    op_idx2word = { op_word2idx[word]:word for word in op_word2idx }
+    op_idx2word[0] = 'NULL'
+    print("Building Batches")
     
-    train_corpus = load_corpus(config, os.path.join(config.data_dir,config.train), 'train', word2idx, asp_word2idx, filter_null=config.unsupervised)
+    need_to_generate_neg_senti = config.unsupervised
+    
+    train_corpus = load_corpus(config, os.path.join(config.data_dir,config.train), 'train', word2idx, op_word2idx, filter_null=config.unsupervised)
     num_train_sample = len(train_corpus[0])
     train_batch_list = list(batch_generator(config, True, train_corpus, need_to_generate_neg_senti))
 
-    dev_corpus = load_corpus(config, os.path.join(config.data_dir,config.dev), 'dev', word2idx, asp_word2idx)
+    dev_corpus = load_corpus(config, os.path.join(config.data_dir,config.dev), 'dev', word2idx, op_word2idx)
     num_dev_sample = len(dev_corpus[0])
     dev_batch_list = list(batch_generator(config, False, dev_corpus, False))
 
-    test_corpus = load_corpus(config, os.path.join(config.data_dir,config.test), 'test', word2idx, asp_word2idx)
+    test_corpus = load_corpus(config, os.path.join(config.data_dir,config.test), 'test', word2idx, op_word2idx)
     num_test_sample = len(test_corpus[0])
     test_batch_list = list(batch_generator(config, False, test_corpus, False))
 
     random.shuffle(train_batch_list)
-    
+
     num_train_batch = len(train_batch_list)
     num_dev_batch = len(dev_batch_list)
     num_test_batch = len(test_batch_list)
@@ -54,7 +55,7 @@ def train(config):
     handle = tf.placeholder(tf.string, shape=[])
     batch = tf.data.Iterator.from_string_handle(handle, train_batch.output_types, train_batch.output_shapes)
 
-    model = Model(config, batch, word_emb, asp_emb)
+    model = Model(config, batch, word_emb, op_emb)
     sess_config = tf.ConfigProto(allow_soft_placement=True)
     sess_config.gpu_options.allow_growth = True
 
@@ -98,55 +99,17 @@ def train(config):
             # model_W_decoder, model_u, model_u_neg_sample, model_log_u, model_log_u_neg_sample, _ = sess.run(
             #     [model.vae_loss, model.entropy_term_loss, model.opinion_reg_loss, model.prob, model.and_mask, model.b_x_b_min, model.b_x_b_max, model.senti, model.y, \
             #     model.W_decoder, model.u, model.u_neg_sample, model.log_u, model.log_u_neg_sample, model.train_op], feed_dict={handle: train_handle})
-            
-            # print(vae_loss,entropy_term_loss,opinion_reg_loss)
-            # print('model_W_decoder',model_W_decoder)
-            # print('model_u',model_u)
-            # print('model_u_neg_sample',model_u_neg_sample) 
-            # print('model_log_u',model_log_u) 
-            # print('model_log_u_neg_sample',model_log_u_neg_sample)
-            
-            # if config.score_scale  == 4:
 
-            # else:
-            #     label2name = {0: 'rec.autos', 1: 'comp.sys.mac.hardware', 2: 'comp.graphics', 3: 'sci.space',
-            #      4: 'talk.politics.guns', 5: 'sci.med', 6: 'comp.sys.ibm.pc.hardware', 
-            #      7: 'comp.os.ms-windows.misc', 8: 'rec.motorcycles', 9: 'talk.religion.misc', 
-            #      10: 'misc.forsale', 11: 'alt.atheism', 12: 'sci.electronics', 
-            #      13: 'comp.windows.x', 14: 'rec.sport.hockey', 15: 'rec.sport.baseball', 
-            #      16: 'soc.religion.christian', 17: 'talk.politics.mideast', 
-            #      18: 'talk.politics.misc', 19: 'sci.crypt'}
-
-            # model_y = np.argmax(model_y,axis=1) 
-
-            # label2name = {0: 'politics', 1: 'sports', 2: 'business', 3: 'technology'}
-            
-            # for i, each_batch in enumerate(model_senti):
-            #     for w in each_batch:
-            #         print("{:15}".format(asp_idx2word[w]), end=' ')
-            #     print("{:15}".format(label2name[model_y[i]]))
-            
-            # print('model_b_x_b_mean')
-            # print(model_b_x_b_mean)
-            # print('model_b_x_b_min')
-            # print(model_b_x_b_min)
-            # print('model_b_x_b_max')
-            # print(model_b_x_b_max)
-            # print('')
-            # print('-'*50)
-            # print('')
-
-
-            if global_step % config.record_period == 0:
-                if config.verbose and config.unsupervised:
-                    loss_sum = tf.Summary(value=[tf.Summary.Value(tag="model/vae_loss", simple_value=vae_loss), ])
-                    writer.add_summary(loss_sum, global_step)
-                    writer.flush()
-                    reg_loss_summ = tf.Summary(value=[tf.Summary.Value(tag="model/entropy_term_loss", simple_value=entropy_term_loss), ])
-                    writer.add_summary(reg_loss_summ, global_step)
-                    writer.flush()
-                else:
-                    pass
+            # if global_step % config.record_period == 0:
+            #     if config.verbose and config.unsupervised:
+            #         loss_sum = tf.Summary(value=[tf.Summary.Value(tag="model/vae_loss", simple_value=vae_loss), ])
+            #         writer.add_summary(loss_sum, global_step)
+            #         writer.flush()
+            #         reg_loss_summ = tf.Summary(value=[tf.Summary.Value(tag="model/entropy_term_loss", simple_value=entropy_term_loss), ])
+            #         writer.add_summary(reg_loss_summ, global_step)
+            #         writer.flush()
+            #     else:
+            #         pass
 
             if global_step % config.eval_period == 0:
                 sess.run(tf.assign(model.is_train, tf.constant(False, dtype=tf.bool)))
@@ -172,7 +135,7 @@ def train(config):
                         filename = os.path.join(config.save_dir, "model_{}.ckpt".format(global_step))
                         saver.save(sess, filename)
                 if config.verbose:
-                    print('alpha {:.4f} beta {:.4f} gamma_positive {:.4f} gamma_negative {:.4f}\n'.format(config.alpha, config.beta, config.gamma_positive, config.gamma_negative))
+                    print('\nalpha {:.4f} beta {:.4f} gamma_positive {:.4f} gamma_negative {:.4f}'.format(config.alpha, config.beta, config.gamma_positive, config.gamma_negative))
                     print('dataset {}'.format(config.data_dir))
                     print('unsupervised {}'.format(config.unsupervised))
                     print('num_filters {} max_len {} emb_dim {} emb_trainable {}'.format(config.num_filters, config.max_len, config.emb_dim, config.emb_trainable))
@@ -190,7 +153,7 @@ def train(config):
                     sess.run(tf.assign(model.lr, model.lr * config.lr_decay))
 
         if config.verbose:
-            print('alpha {:.4f} beta {:.4f} gamma_positive {:.4f} gamma_negative {:.4f}\n'.format(config.alpha, config.beta, config.gamma_positive, config.gamma_negative))
+            print('\nalpha {:.4f} beta {:.4f} gamma_positive {:.4f} gamma_negative {:.4f}'.format(config.alpha, config.beta, config.gamma_positive, config.gamma_negative))
             print('dataset {}'.format(config.data_dir))
             print('unsupervised {}'.format(config.unsupervised))
             print('num_filters {} max_len {} emb_dim {} emb_trainable {}'.format(config.num_filters, config.max_len, config.emb_dim, config.emb_trainable))
@@ -204,24 +167,6 @@ def train(config):
             print('Test\n')
             print('Precision {:.5f}, Recall {:.5f}, Micro F1 {:.5f}, Macro F1 {:.5f}, ACC {:.5f} \n'.format(best_test_precision, best_test_recall, best_test_f1_micro, best_test_f1_macro, best_test_accuracy)) 
 
-            # if not config.unsupervised:
-            #     sess.run(tf.assign(model.is_train, tf.constant(False, dtype=tf.bool)))
-            #     saver.restore(sess, tf.train.latest_checkpoint(config.save_dir))
-            #     dev_precision, dev_recall, dev_f1_macro, dev_f1_micro, dev_accuracy, dev_golden, dev_pred  = \
-            #         dev_evaluator(config, model, num_dev_sample, num_dev_batch, sess, handle, dev_handle, tag="dev", flip=True, verbose=True)
-                    
-            #     test_precision, test_recall, test_f1_macro, test_f1_micro, test_accuracy, test_golden, test_pred = \
-            #         test_evaluator(config, model, num_test_sample, num_test_batch, sess, handle, test_handle, tag="test", flip=True)
-            #     print('\n')
-            #     print('Restore from saved model')
-                
-            #     print('Dev\n')
-            #     print('Precision {:.5f}, Recall {:.5f}, Micro F1 {:.5f}, Macro F1 {:.5f}, ACC {:.5f} \n'.format(dev_precision, dev_recall, dev_f1_micro, dev_f1_macro, dev_accuracy))
-
-            #     print('Test\n')
-            #     print('Precision {:.5f}, Recall {:.5f}, Micro F1 {:.5f}, Macro F1 {:.5f}, ACC {:.5f} \n'.format(test_precision, test_recall, test_f1_micro, test_f1_macro,test_accuracy)) 
-            
-            
 
         if not os.path.exists(config.para_log_dir):
             os.makedirs(config.para_log_dir)
@@ -246,13 +191,5 @@ def train(config):
             fo.write('Precision {:.5f}, Recall {:.5f}, Micro F1 {:.5f}, Macro F1 {:.5f}, ACC {:.5f} \n'.format(best_test_precision, best_test_recall, best_test_f1_micro, best_test_f1_macro, best_test_accuracy))
 
             fo.write('='*100 + '\n')
-        # if global_step == num_train_batch * config.num_epochs:
-            # with open(config.pred_file,'w') as fo:
-            #     fo.write('\ndev\n')
-            #     for i, gold, pred in zip(range(len(dev_golden)), dev_golden, dev_pred):
-            #         fo.write("{} {} {}\n".format(i+1,gold,pred))
-            #     fo.write('\ntest\n')
-            #     for i, gold, pred in zip(range(len(test_golden)),test_golden, test_pred):
-            #         fo.write("{} {} {}\n".format(i+1,gold,pred))
-         
+        
  
