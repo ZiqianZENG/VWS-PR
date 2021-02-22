@@ -28,6 +28,10 @@ We also implement a model which uses contextualized embeddings (BERT) as the inp
 cd Contextualized
 ```
 
+| Yelp  | IMDB | Amazon |
+| ------------- | ------------- | ------------- | 
+| 0.8904  | 0.8362 | 0.8389  |
+
 
 
 
