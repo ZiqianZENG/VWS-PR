@@ -26,8 +26,11 @@ python amazon.py --beta 0.0
 We also implement a model which uses contextualized embeddings (BERT) as the input of CNN.
 ```bash
 cd Contextualized
+python yelp.py
+python imdb.py
+python amazon.py
 ```
-
+Micro F1 score using contextualized embeddings
 | Yelp  | IMDB | Amazon |
 | ------------- | ------------- | ------------- | 
 | 0.8904  | 0.8362 | 0.8389  |
