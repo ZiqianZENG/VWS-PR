@@ -22,7 +22,7 @@ python imdb.py --beta 0.0
 python amazon.py --beta 0.0
 ```
 
-##Contextualized Eembeddings
+## Contextualized Eembeddings
 We also implement a model which uses contextualized embeddings (BERT) as the input of CNN.
 ```bash
 cd Contextualized
